@@ -15,6 +15,7 @@ import org.silverpeas.components.rssaggregator.model.SPChannel;
 import org.silverpeas.components.rssaggregator.service.RSSService;
 import org.silverpeas.components.rssaggregator.service.RSSServiceProvider;
 import org.silverpeas.core.admin.component.model.ComponentInst;
+import org.silverpeas.core.admin.component.model.ComponentInstLight;
 import org.silverpeas.core.admin.component.model.SilverpeasComponentInstance;
 import org.silverpeas.core.admin.domain.model.Domain;
 import org.silverpeas.core.admin.service.OrganizationController;
@@ -56,6 +57,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
+import static org.silverpeas.looks.aurora.AuroraSpaceHomePage.TEMPLATE_NAME;
 
 public class LookAuroraHelper extends LookSilverpeasV5Helper {
 
@@ -349,6 +351,10 @@ public class LookAuroraHelper extends LookSilverpeasV5Helper {
 
   public NextEvents getNextEvents() {
     List<String> allowedComponentIds = asList(getAllowedComponentIds("home.events.appId"));
+    return getNextEvents(allowedComponentIds);
+  }
+
+  public NextEvents getNextEvents(List<String> allowedComponentIds) {
     final List<NextEventsDate> result = new ArrayList<>();
     if (!allowedComponentIds.isEmpty()) {
       final CalendarResourceURIs uri = CalendarResourceURIs.get();
@@ -406,14 +412,16 @@ public class LookAuroraHelper extends LookSilverpeasV5Helper {
   private PublicationHelper getPublicationHelper() throws ClassNotFoundException,
       InstantiationException, IllegalAccessException {
     if (kmeliaTransversal == null) {
-      Class<?> helperClass = Class.forName("com.stratelia.webactiv.kmelia.KmeliaTransversal");
+      String helperClassName = getSettings("publicationHelper",
+          "org.silverpeas.components.kmelia.KmeliaTransversal");
+      Class<?> helperClass = Class.forName(helperClassName);
       kmeliaTransversal = (PublicationHelper) helperClass.newInstance();
-      kmeliaTransversal.setMainSessionController(this.getMainSessionController());
+      kmeliaTransversal.setMainSessionController(getMainSessionController());
     }
     return kmeliaTransversal;
   }
 
-  private List<PublicationDetail> getLastUpdatedPublicationsSince(String spaceId, int sinceNbDays,
+  public List<PublicationDetail> getLastUpdatedPublicationsSince(String spaceId, int sinceNbDays,
       int nbPublis) {
     try {
       return getPublicationHelper().getUpdatedPublications(spaceId, sinceNbDays, nbPublis);
@@ -646,5 +654,49 @@ public class LookAuroraHelper extends LookSilverpeasV5Helper {
       }
     }
     return null;
+  }
+
+  public AuroraSpaceHomePage getHomePage(String spaceId) {
+    setSpaceIdAndSubSpaceId(spaceId);
+    String currentSpaceId = getSubSpaceId();
+
+    // get main information of space
+    SpaceInstLight space = getOrganisationController().getSpaceInstLightById(currentSpaceId);
+    AuroraSpaceHomePage homepage = new AuroraSpaceHomePage(this, space);
+
+    return homepage;
+  }
+
+  public ComponentInstLight getConfigurationApp(String spaceId) {
+    OrganizationController oc = OrganizationController.get();
+    List<ComponentInstLight> apps = getAppsByName(spaceId, "webPages");
+    for (ComponentInstLight app : apps) {
+      String xmlFormName = oc.getComponentParameterValue(app.getId(), "xmlTemplate");
+      if (StringUtil.isDefined(xmlFormName) && xmlFormName.equals(TEMPLATE_NAME)) {
+        return app;
+      }
+    }
+    return null;
+  }
+
+  private List<ComponentInstLight> getAppsByName(String spaceId, String name) {
+    List<ComponentInstLight> apps = new ArrayList();
+    OrganizationController oc = OrganizationController.get();
+    String[] appsIds = oc.getAvailCompoIdsAtRoot(spaceId, getUserId());
+    for (String appId : appsIds) {
+      ComponentInstLight app = oc.getComponentInstLight(appId);
+      if (app.getName().equals(name)) {
+        apps.add(app);
+      }
+    }
+    return apps;
+  }
+
+
+  public boolean isSpaceAdmin(String spaceId) {
+    if (getUserDetail().isAccessAdmin()) {
+      return true;
+    }
+    return getSpaceAdmins(spaceId).contains(getUserDetail());
   }
 }

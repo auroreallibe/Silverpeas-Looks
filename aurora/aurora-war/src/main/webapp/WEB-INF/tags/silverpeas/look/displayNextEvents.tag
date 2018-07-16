@@ -37,7 +37,7 @@
 <fmt:message var="labelEvents" key="look.home.events.next"/>
 <fmt:message var="labelEventsMore" key="look.home.events.more"/>
 
-<c:if test="${not empty nextEvents}">
+<c:if test="${not empty nextEvents.nextEventsDates}">
   <div class="secteur-container events portlet" id="home-event">
     <div class="header">
       <h2 class="portlet-title">${labelEvents}</h2>
