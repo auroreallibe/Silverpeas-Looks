@@ -1218,3 +1218,15 @@ color:#1C94D4;
 
 .btn-deploy-all-item, #dynamicalLoad, #displaying, #displaying a {width:auto}
 #displaying {width:228px;}
+
+.spaceHome .spaceNavigation::after,
+.spaceHome .cg-favorit-list::after {
+	content:' ';
+	clear:left;
+	display:block;
+}
+.spaceHome .cg-favorit-list li {
+	display:inline-block;
+	float:left;
+	margin-right:1em;
+}

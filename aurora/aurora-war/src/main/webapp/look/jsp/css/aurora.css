@@ -271,3 +271,26 @@
   max-height: 100px;
   overflow: hidden;
 }
+
+.spaceHome #mainPicture img,
+.spaceHome #secondPicture img{
+	max-width:100%;
+}
+.spaceHome .cg-favorit-list {
+	list-style-type:none;
+}
+#spaceUsers ul {
+	list-style-type:none;
+	list-style-image:none;
+	padding:0;
+	margin:0;
+}
+#spaceUsers  div.user-card .avatar {
+	float:left;
+}
+#spaceUsers  div.user-card .field {
+	width:200px
+}
+#spaceUsers  div.user-card {
+	width:276px
+}

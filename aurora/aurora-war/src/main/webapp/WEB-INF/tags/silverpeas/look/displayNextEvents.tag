@@ -40,7 +40,7 @@
 <c:if test="${not empty nextEvents.nextEventsDates}">
   <div class="secteur-container events portlet" id="home-event">
     <div class="header">
-      <h2 class="portlet-title">${labelEvents}</h2>
+      <h4 class="portlet-title">${labelEvents}</h4>
     </div>
     <div class="portlet-content" id="calendar">
       <ul class="eventList" id="eventList">

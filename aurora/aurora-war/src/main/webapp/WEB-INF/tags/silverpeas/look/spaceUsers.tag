@@ -46,7 +46,7 @@
 <c:if test="${not empty users}">
   <div class="secteur-container" id="spaceUsers">
     <div class="header">
-      <h2 class="portlet-title">${labelSpaceUsers}</h2>
+      <h4 class="portlet-title">${labelSpaceUsers}</h4>
     </div>
     <div class="portlet-content">
       <ul class="list-users">
