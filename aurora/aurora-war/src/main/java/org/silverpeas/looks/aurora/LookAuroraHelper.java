@@ -266,12 +266,12 @@ public class LookAuroraHelper extends LookSilverpeasV5Helper {
   }
 
   public List<PublicationDetail> getLatestPublications() {
-    String spaceId = getSettings("home.publications.spaceid", "");
-    if (StringUtil.isDefined(spaceId)) {
-      return getLatestPublications(spaceId,
-          Integer.parseInt(getSettings("home.publications.nb", "3")));
+    String spaceId = getSettings("home.publications.spaceid", "").trim();
+    int pubCount = Integer.parseInt(getSettings("home.publications.nb", "3"));
+    if (StringUtil.isNotDefined(spaceId)) {
+      spaceId = null;
     }
-    return List.of();
+    return getLatestPublications(spaceId, pubCount);
   }
 
   public List<PublicationDetail> getMoreLatestPublications() {
